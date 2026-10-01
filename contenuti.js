@@ -117,7 +117,11 @@ module.exports = {
       nascita: "",
       composizione: "Numero di maschi e femmine, colori",
       stato: "Disponibili, prenotati o tutti assegnati",
-      foto: "",
+      foto: "", // usata se la galleria qui sotto e' vuota
+      /* Piu' foto della cucciolata: diventano un carosello con frecce e
+         pallini. Non scorre da solo, al contrario di quello in home.
+         Ogni voce: "img/..." oppure { foto, fotoM, fotoS, didascalia } */
+      galleria: ["", "", ""],
       note: ""
     }
   ]

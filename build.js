@@ -23,8 +23,6 @@ const ICONA_CHAT = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false
 
 const ICONA_PREV = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M15 5l-7 7 7 7"/></svg>';
 const ICONA_NEXT = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>';
-const ICONA_PAUSA = '<svg class="i-pausa" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 5h3.1v14H8zM12.9 5H16v14h-3.1z"/></svg>';
-const ICONA_PLAY = '<svg class="i-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 5l11 7-11 7z"/></svg>';
 
 const FAVICON = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23221c18'/%3E%3Ccircle cx='11' cy='13' r='3' fill='%23b3702f'/%3E%3Ccircle cx='21' cy='13' r='3' fill='%23b3702f'/%3E%3C/svg%3E";
 
@@ -96,61 +94,99 @@ function nomeConLink(genitore, rel) {
 
 /* ---------- blocchi ---------- */
 
-function immagineSlide(v, alt, rel, primaInOrdine) {
+function immagineSlide(v, alt, rel, opz) {
   if (!v.foto) {
-    return `<div class="hero-img ph" role="img" aria-label="${esc(alt)}, foto in arrivo"><span>${esc(alt)}</span></div>`;
+    return `<div class="${opz.classeImg} ph" role="img" aria-label="${esc(alt)}, foto in arrivo"><span>${esc(alt)}</span></div>`;
   }
   const misure = [];
   if (v.fotoS) misure.push(`${esc(rel + v.fotoS)} 800w`);
   if (v.fotoM) misure.push(`${esc(rel + v.fotoM)} 1280w`);
   misure.push(`${esc(rel + v.foto)} 1920w`);
-  const srcset = misure.length > 1 ? ` srcset="${misure.join(", ")}" sizes="100vw"` : "";
-  // la prima immagine decide quando la pagina "sembra" pronta: va scaricata subito
-  const priorita = primaInOrdine
+  const srcset = misure.length > 1 ? ` srcset="${misure.join(", ")}" sizes="${opz.sizes}"` : "";
+  // solo la prima foto della home va scaricata subito: e' quella che decide
+  // quando la pagina "sembra" pronta. Tutte le altre possono attendere.
+  const priorita = opz.subito
     ? ' fetchpriority="high" decoding="async"'
     : ' loading="lazy" fetchpriority="low" decoding="async"';
-  return `<img class="hero-img" src="${esc(rel + v.foto)}"${srcset} alt="${esc(alt)}"${priorita}>`;
+  return `<img class="${opz.classeImg}" src="${esc(rel + v.foto)}"${srcset} alt="${esc(alt)}"${priorita}>`;
 }
 
-function carosello(rel) {
-  const voci = (S.caroselloHome || [])
-    .map((v) => (typeof v === "string" ? { foto: v } : v || {}));
+/* Carosello riutilizzabile: lo usano l'hero della home e ogni cucciolata.
+   "auto" fa scorrere le foto da sole, e vale solo per la home: piu' caroselli
+   che girano insieme nella stessa pagina sarebbero illeggibili.
+   Non c'e' un pulsante di pausa; a fermare lo scorrimento basta usare una
+   freccia o un pallino, che sono raggiungibili anche da tastiera.
+   Con meno di due foto resta un'immagine ferma, senza comandi. */
+function caroselloHtml(o) {
+  const lista = (o.voci || [])
+    .filter((v) => v != null)
+    .map((v) => (typeof v === "string" ? { foto: v } : v));
 
-  // con meno di due voci non c'e' nulla da far scorrere: resta la foto sola
-  if (voci.length < 2) {
-    const sola = voci[0] || { foto: S.fotoHome };
-    const alt = sola.didascalia || `${S.razza} dell'${S.nome}`;
-    return '<div class="car-hero car-hero-sola">' +
-      `<div class="car-track"><div class="car-slide is-on">${immagineSlide(sola, alt, rel, true)}` +
-      (sola.didascalia ? `<p class="car-cap">${esc(sola.didascalia)}</p>` : "") +
+  const comune = { classeImg: o.classeImg, sizes: o.sizes };
+
+  if (lista.length < 2) {
+    const sola = lista[0] || { foto: "" };
+    const alt = sola.didascalia || o.alt(0);
+    return `<div class="${o.classe} car-sola">` +
+      '<div class="car-track"><div class="car-slide is-on">' +
+        immagineSlide(sola, alt, o.rel, Object.assign({ subito: !!o.primaSubito }, comune)) +
+        (sola.didascalia ? `<p class="car-cap">${esc(sola.didascalia)}</p>` : "") +
       "</div></div></div>";
   }
 
-  const n = voci.length;
-  const slide = voci.map((v, i) => {
-    const alt = v.didascalia || `${S.razza} dell'${S.nome}, foto ${i + 1}`;
+  const n = lista.length;
+  const slide = lista.map((v, i) => {
+    const alt = v.didascalia || o.alt(i);
     return `<li class="car-slide${i === 0 ? " is-on" : ""}" role="group" aria-roledescription="slide" aria-label="${i + 1} di ${n}">` +
-      immagineSlide(v, alt, rel, i === 0) +
+      immagineSlide(v, alt, o.rel, Object.assign({ subito: i === 0 && !!o.primaSubito }, comune)) +
       (v.didascalia ? `<p class="car-cap">${esc(v.didascalia)}</p>` : "") +
     "</li>";
   }).join("");
 
-  const punti = voci.map((v, i) =>
-    '<li>' +
+  const punti = lista.map((v, i) =>
+    "<li>" +
       `<button type="button" class="car-dot" data-car-va="${i}" aria-label="Vai alla foto ${i + 1} di ${n}"${i === 0 ? ' aria-current="true"' : ""}></button>` +
     "</li>").join("");
 
-  return '<div class="car-hero">' +
-    '<section class="car" data-car aria-roledescription="carosello" aria-label="Foto dell\'allevamento">' +
+  return `<div class="${o.classe}">` +
+    `<section class="car" data-car${o.auto ? " data-car-auto" : ""} aria-roledescription="carosello" aria-label="${esc(o.etichetta)}">` +
       `<ul class="car-track" data-car-track>${slide}</ul>` +
       '<div class="car-bar">' +
         `<button type="button" class="car-arrow" data-car-prev aria-label="Foto precedente">${ICONA_PREV}</button>` +
         `<ul class="car-dots">${punti}</ul>` +
         `<button type="button" class="car-arrow" data-car-next aria-label="Foto successiva">${ICONA_NEXT}</button>` +
-        `<button type="button" class="car-play" data-car-play aria-pressed="false" aria-label="Metti in pausa lo scorrimento automatico">${ICONA_PAUSA}${ICONA_PLAY}</button>` +
       "</div>" +
     "</section>" +
   "</div>";
+}
+
+function carosello(rel) {
+  const voci = (S.caroselloHome || []).length ? S.caroselloHome : [{ foto: S.fotoHome }];
+  return caroselloHtml({
+    voci, rel,
+    classe: "car-hero",
+    classeImg: "hero-img",
+    sizes: "100vw",
+    etichetta: "Foto dell'allevamento",
+    alt: (i) => `${S.razza} dell'${S.nome}, foto ${i + 1}`,
+    auto: true,
+    primaSubito: true,
+  });
+}
+
+function caroselloCucciolata(l, nomePadre, nomeMadre, rel) {
+  const coppia = `${nomePadre} e ${nomeMadre}`;
+  const voci = (l.galleria || []).length ? l.galleria : [{ foto: l.foto || "" }];
+  return caroselloHtml({
+    voci, rel,
+    classe: "car-box",
+    classeImg: "litter-img",
+    sizes: "(min-width: 760px) 48vw, 100vw",
+    etichetta: `Foto della cucciolata ${coppia}`,
+    alt: (i) => `Cucciolata ${coppia}, foto ${i + 1}`,
+    auto: false,
+    primaSubito: false,
+  });
 }
 
 function grigliaCani(rel) {
@@ -172,7 +208,7 @@ function schedaCucciolata(l, inHome, rel) {
   if (l.stato) fatti += riga("Disponibilità", esc(l.stato));
 
   return '<article class="litter">' +
-    `<div class="litter-photo">${foto(l.foto, `Cucciolata ${nomePadre} e ${nomeMadre}`, "litter-img", rel)}</div>` +
+    `<div class="litter-photo">${caroselloCucciolata(l, nomePadre, nomeMadre, rel)}</div>` +
     '<div class="litter-body">' +
       `<${H} class="litter-title">${nomeConLink(l.padre, rel)} <span class="cross">×</span> ${nomeConLink(l.madre, rel)}</${H}>` +
       (fatti ? `<dl class="facts">${fatti}</dl>` : "") +

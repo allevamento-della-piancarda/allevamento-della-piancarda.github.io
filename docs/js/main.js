@@ -30,23 +30,27 @@
   });
 })();
 
-/* Carosello della home. Blocco separato: il lightbox qui sopra esce con un
-   return anticipato quando <dialog> non e' supportato, e il carosello deve
+/* Caroselli. Blocco separato: il lightbox qui sopra esce con un return
+   anticipato quando <dialog> non e' supportato, e i caroselli devono
    funzionare comunque. Senza questo file le foto restano tutte visibili
-   come striscia scorrevole (vedi il CSS). */
+   come striscia scorrevole (vedi il CSS).
+
+   Scorrono da soli solo quelli con data-car-auto, cioe' l'hero della home:
+   piu' caroselli in movimento nella stessa pagina sarebbero illeggibili.
+   Non c'e' un pulsante di pausa: a fermare lo scorrimento basta usare una
+   freccia o un pallino, raggiungibili anche da tastiera. */
 (function () {
   "use strict";
 
   var INTERVALLO = 9000;
-  var caroselli = document.querySelectorAll("[data-car]");
 
-  Array.prototype.forEach.call(caroselli, function (car) {
+  Array.prototype.forEach.call(document.querySelectorAll("[data-car]"), function (car) {
     var slide = Array.prototype.slice.call(car.querySelectorAll(".car-slide"));
     if (slide.length < 2) return;
 
     var track = car.querySelector("[data-car-track]");
     var punti = Array.prototype.slice.call(car.querySelectorAll("[data-car-va]"));
-    var play = car.querySelector("[data-car-play]");
+    var auto = car.hasAttribute("data-car-auto");
     var corrente = 0;
     var timer = null;
 
@@ -66,33 +70,28 @@
       });
     }
 
-    function aggiornaPulsante() {
-      var inPausa = !timer;
-      if (play) {
-        play.setAttribute("aria-pressed", inPausa ? "true" : "false");
-        play.setAttribute("aria-label", inPausa
-          ? "Riprendi lo scorrimento automatico"
-          : "Metti in pausa lo scorrimento automatico");
-      }
-      // da fermo i cambi di slide possono essere annunciati, in movimento no:
-      // altrimenti lo screen reader parlerebbe ogni sei secondi
-      if (track) track.setAttribute("aria-live", inPausa ? "polite" : "off");
+    // da fermo i cambi di foto possono essere annunciati, in movimento no:
+    // altrimenti lo screen reader parlerebbe ogni nove secondi
+    function aggiornaAnnunci() {
+      if (track) track.setAttribute("aria-live", timer ? "off" : "polite");
     }
 
     function avvia() {
-      if (timer || senzaMovimento()) { aggiornaPulsante(); return; }
+      if (!auto || timer || senzaMovimento()) { aggiornaAnnunci(); return; }
       timer = setInterval(function () { mostra(corrente + 1); }, INTERVALLO);
-      aggiornaPulsante();
+      aggiornaAnnunci();
     }
 
     function ferma() {
       if (timer) { clearInterval(timer); timer = null; }
-      aggiornaPulsante();
+      aggiornaAnnunci();
     }
 
-    // qualunque comando usato a mano interrompe lo scorrimento: chi ha preso
-    // il controllo non vuole vedersi cambiare la foto sotto il dito
-    function vaiA(n) { ferma(); mostra(n); }
+    // qualunque comando usato a mano interrompe lo scorrimento, e non lo
+    // riprende: chi ha preso il controllo non vuole vedersi cambiare la foto
+    // sotto il dito. E' anche il modo per fermarlo, ora che il pulsante
+    // di pausa non c'e' piu'.
+    function vaiA(n) { auto = false; ferma(); mostra(n); }
 
     var prev = car.querySelector("[data-car-prev]");
     var next = car.querySelector("[data-car-next]");
@@ -103,11 +102,6 @@
         vaiA(parseInt(p.getAttribute("data-car-va"), 10) || 0);
       });
     });
-    if (play) {
-      play.addEventListener("click", function () {
-        if (timer) ferma(); else { timer = null; avvia(); }
-      });
-    }
 
     car.addEventListener("keydown", function (e) {
       if (e.key === "ArrowLeft") { e.preventDefault(); vaiA(corrente - 1); }

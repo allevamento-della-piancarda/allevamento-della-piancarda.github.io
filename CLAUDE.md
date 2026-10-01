@@ -55,7 +55,13 @@ Progressive enhancement hinges on the `js` class that the inline `<head>` script
 - without it, CSS renders the slides as a horizontal `scroll-snap` strip and hides the controls — every photo stays reachable with no JS
 - with it, slides stack absolutely and cross-fade, and the arrows/dots/pause button appear
 
-Controls are kept deliberately, unlike the reference site, which disables its arrows and dots in CSS — without them nobody can pause or navigate by keyboard. They are overlaid on the photo with fixed white-on-translucent-black colours rather than theme variables, since no theme colour is legible over an arbitrary photograph, plus a bottom gradient scrim.
+`caroselloHtml()` is shared by the hero and by each litter card; `.car-hero` is the full-bleed auto-advancing variant, `.car-box` the in-card manual one (`caroselloCucciolata()`, 4/3, used on `/cucciolate/` and for the home page's latest-litter card).
+
+**Only carousels carrying `data-car-auto` advance on their own** — just the hero. Several rotating carousels on one page are unreadable, so litter carousels are manual by design.
+
+There is deliberately **no pause button** (removed on request). The stop mechanism is any manual control: an arrow or dot click sets `auto = false` permanently, and both are keyboard-reachable — on narrow screens arrows hide but dots remain, so the mechanism never disappears. Preserve that `vaiA()` behaviour if you touch the JS; without it, auto-rotation would have no way to be stopped.
+
+Controls are overlaid on the photo with fixed white-on-translucent-black colours rather than theme variables, since no theme colour is legible over an arbitrary photograph, plus a bottom gradient scrim.
 
 The carousel JS lives in its own IIFE at the end of `src/js/main.js`, **not** inside the lightbox block — that one returns early when `<dialog>` is unsupported, which would skip anything appended after it.
 
