@@ -28,8 +28,8 @@ module.exports = {
   },
 
   contatti: {
-    whatsapp: "390000000000", // prefisso 39 + numero, solo cifre
-    telefono: "000 000 0000",
+    whatsapp: "393392220227", // prefisso 39 + numero, solo cifre
+    telefono: "+39 339 222 0227",
     zona: "Località, provincia",
     email: "",
     facebook: "", // link completo alla pagina
