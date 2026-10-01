@@ -23,14 +23,26 @@ Pagine generate: home, `/cani/`, `/cani/<id>/` per ogni cane, `/cucciolate/`, `4
 
 Anteprima in locale: `python3 -m http.server -d docs` oppure `npx serve docs`, poi apri http://localhost:8000.
 
-## Pubblicare su GitHub Pages
+## Dove è pubblicato
 
-1. Carica questa cartella in una repository.
-2. Settings → Pages → Deploy from a branch → `main`, cartella `/docs`.
-3. Il dominio è già in `docs/CNAME` (`www.cucciolidobermanpiancarda.it`). Nel DNS del registrar crea:
+Repository `allevamento-della-piancarda/allevamento-della-piancarda.github.io`, pubblicata da GitHub Pages dal branch `main`, cartella `/docs`.
+
+Indirizzo attuale: <https://allevamento-della-piancarda.github.io>
+
+### Due interruttori in `contenuti.js`
+
+- `inCostruzione: true` — mette `noindex` su tutte le pagine e blocca i motori di ricerca con `robots.txt`. Da mettere a `false` quando i contenuti veri sostituiscono i segnaposto.
+- `dominioAttivo: false` — finché è `false` non viene scritto il file `CNAME`. Serve perché un `CNAME` verso un dominio non ancora registrato rende il sito irraggiungibile.
+
+### Collegare il dominio definitivo
+
+1. Registra `cucciolidobermanpiancarda.it` (solo registrazione: l'hosting lo fa GitHub).
+2. Nel DNS del registrar crea:
    - 4 record A sul dominio nudo: `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`
-   - un record CNAME `www` che punta a `<utente>.github.io`
-4. Quando GitHub ha verificato il dominio, attiva "Enforce HTTPS".
+   - un record CNAME `www` che punta a `allevamento-della-piancarda.github.io`
+3. In `contenuti.js` rimetti `sitoUrl: "https://www.cucciolidobermanpiancarda.it"` e `dominioAttivo: true`, poi `node build.js`, commit e push.
+4. Settings → Pages → Custom domain: inserisci `www.cucciolidobermanpiancarda.it`.
+5. Quando GitHub ha verificato il dominio, attiva "Enforce HTTPS".
 
 Il dominio nudo reindirizza automaticamente su www.
 
