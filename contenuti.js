@@ -10,7 +10,8 @@
 */
 module.exports = {
   // Indirizzo pubblico del sito. Finche' il dominio non e' attivo si usa quello di GitHub Pages.
-  sitoUrl: "https://www.cucciolidobermanpiancarda.it",
+  // Sabato, a dominio registrato: rimettere "https://www.cucciolidobermanpiancarda.it" e dominioAttivo: true
+  sitoUrl: "https://allevamento-della-piancarda.github.io",
   // true quando il dominio e' registrato e i DNS puntano a GitHub: solo allora viene scritto il file CNAME.
   dominioAttivo: false,
   // true finche' i contenuti sono segnaposto: mette noindex su tutte le pagine e blocca i motori di ricerca.
