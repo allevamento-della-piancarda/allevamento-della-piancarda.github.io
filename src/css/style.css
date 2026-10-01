@@ -1,29 +1,33 @@
 /* Allevamento della Piancarda
-   Palette presa dal mantello del Dobermann: nero/marrone scuro per le fasce,
-   focato (fulvo) solo come piccoli segni, come le focature sul cane. */
+   Palette presa dal mantello del Dobermann: nero/marrone caldo per le fasce,
+   focato (ruggine) solo come piccoli segni, come le focature sul cane.
+   Sfondi, linee e segnaposto condividono la stessa tinta calda delle fasce
+   (intorno ai 35 gradi): tenerli su una tinta sola e' cio' che evita
+   l'effetto spento. L'accento e' abbastanza scuro da reggere 4.5:1 come
+   testo sul fondo chiaro. */
 
 :root {
-  --mantello: #221c18;
-  --focato: #b3702f;
-  --carta: #eef0ea;
-  --superficie: #e3e6dd;
-  --inchiostro: #221c18;
-  --inchiostro-2: #5a554e;
+  --mantello: #211b16;
+  --focato: #8f4f1c;
+  --carta: #f5f2ec;
+  --superficie: #ebe5db;
+  --inchiostro: #211b16;
+  --inchiostro-2: #574f45;
 
   --bg: var(--carta);
   --bg-alt: var(--superficie);
   --text: var(--inchiostro);
   --muted: var(--inchiostro-2);
   --accent: var(--focato);
-  --line: #cfd3c7;
-  --ph: #dde0d6;
-  --ph-text: #6f6a62;
+  --line: #d9d0c2;
+  --ph: #e4ddd1;
+  --ph-text: #686056;
   --band: var(--mantello);
-  --band-text: #efe9e1;
-  --band-muted: #b9aea2;
-  --band-line: rgba(239, 233, 225, 0.14);
-  --btn-bg: #221c18;
-  --btn-fg: #efe9e1;
+  --band-text: #f2ebe1;
+  --band-muted: #c0b2a2;
+  --band-line: rgba(242, 235, 225, 0.15);
+  --btn-bg: #211b16;
+  --btn-fg: #f2ebe1;
 
   --h-testata: 4rem;
 
@@ -38,31 +42,31 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #171411;
-    --bg-alt: #1e1a16;
-    --text: #ece6de;
-    --muted: #b0a89e;
-    --accent: #d08f52;
-    --line: #37302a;
-    --ph: #26211c;
-    --ph-text: #9b9187;
-    --band: #0f0d0b;
-    --btn-bg: #ece6de;
-    --btn-fg: #171411;
+    --bg: #1a1512;
+    --bg-alt: #221c17;
+    --text: #efe7dc;
+    --muted: #b6aa9c;
+    --accent: #e0a05e;
+    --line: #3a322a;
+    --ph: #282118;
+    --ph-text: #a0968a;
+    --band: #120f0c;
+    --btn-bg: #efe7dc;
+    --btn-fg: #1a1512;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #171411;
-  --bg-alt: #1e1a16;
-  --text: #ece6de;
-  --muted: #b0a89e;
-  --accent: #d08f52;
-  --line: #37302a;
-  --ph: #26211c;
-  --ph-text: #9b9187;
-  --band: #0f0d0b;
-  --btn-bg: #ece6de;
-  --btn-fg: #171411;
+  --bg: #1a1512;
+  --bg-alt: #221c17;
+  --text: #efe7dc;
+  --muted: #b6aa9c;
+  --accent: #e0a05e;
+  --line: #3a322a;
+  --ph: #282118;
+  --ph-text: #a0968a;
+  --band: #120f0c;
+  --btn-bg: #efe7dc;
+  --btn-fg: #1a1512;
 }
 
 *, *::before, *::after { box-sizing: inherit; }
@@ -212,10 +216,10 @@ p { margin: 0 0 1em; max-width: 36em; }
 .on-band {
   background: var(--band);
   color: var(--band-text);
-  --btn-bg: #efe9e1;
-  --btn-fg: #221c18;
-  --ph: #2c2520;
-  --ph-text: #a79c90;
+  --btn-bg: #f2ebe1;
+  --btn-fg: #211b16;
+  --ph: #2c241c;
+  --ph-text: #a89c8d;
 }
 
 .btn {
@@ -496,14 +500,14 @@ p { margin: 0 0 1em; max-width: 36em; }
   max-width: 94vw;
   max-height: 90vh;
 }
-.lightbox::backdrop { background: rgba(15, 12, 10, 0.9); }
+.lightbox::backdrop { background: rgba(18, 15, 12, 0.92); }
 .lightbox img { max-width: 94vw; max-height: 84vh; object-fit: contain; border-radius: 3px; }
 .lb-close {
   position: fixed;
   top: calc(env(safe-area-inset-top, 0px) + 1rem);
   right: 1rem;
-  background: #efe9e1;
-  color: #221c18;
+  background: #f2ebe1;
+  color: #211b16;
   border: 0;
   border-radius: 999px;
   padding: 0.5rem 1rem;

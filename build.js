@@ -24,7 +24,7 @@ const ICONA_CHAT = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false
 const ICONA_PREV = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M15 5l-7 7 7 7"/></svg>';
 const ICONA_NEXT = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>';
 
-const FAVICON = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23221c18'/%3E%3Ccircle cx='11' cy='13' r='3' fill='%23b3702f'/%3E%3Ccircle cx='21' cy='13' r='3' fill='%23b3702f'/%3E%3C/svg%3E";
+const FAVICON = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23211b16'/%3E%3Ccircle cx='11' cy='13' r='3' fill='%23e0a05e'/%3E%3Ccircle cx='21' cy='13' r='3' fill='%23e0a05e'/%3E%3C/svg%3E";
 
 /* ---------- controlli sui contenuti ---------- */
 
@@ -385,7 +385,7 @@ ${noindex ? '<meta name="robots" content="noindex, nofollow">' : `<link rel="can
 <meta property="og:description" content="${esc(descrizione)}">
 ${is404 ? "" : `<meta property="og:url" content="${esc(url)}">`}
 ${immagine ? `<meta property="og:image" content="${esc(BASE + "/" + immagine)}">` : ""}
-<meta name="theme-color" content="#221c18">
+<meta name="theme-color" content="#211b16">
 <link rel="icon" href="${FAVICON}">
 <link rel="stylesheet" href="${rel}css/style.css?v=${VERSIONE}">
 <script>document.documentElement.classList.add("js")</script>
