@@ -9,7 +9,12 @@
   Nuovo cane: copia un blocco dentro "cani", cambia id e dati, poi rigenera il sito con: node build.js
 */
 module.exports = {
+  // Indirizzo pubblico del sito. Finche' il dominio non e' attivo si usa quello di GitHub Pages.
   sitoUrl: "https://www.cucciolidobermanpiancarda.it",
+  // true quando il dominio e' registrato e i DNS puntano a GitHub: solo allora viene scritto il file CNAME.
+  dominioAttivo: false,
+  // true finche' i contenuti sono segnaposto: mette noindex su tutte le pagine e blocca i motori di ricerca.
+  inCostruzione: true,
   nome: "Allevamento della Piancarda",
   razza: "Dobermann",
   fotoHome: "",

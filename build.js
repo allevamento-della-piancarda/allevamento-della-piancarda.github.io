@@ -264,6 +264,7 @@ function corpo404(rel) {
 
 function pagina({ percorso, titolo, descrizione, attivo = "", corpo, immagine = "" }) {
   const is404 = percorso === "/404.html";
+  const noindex = is404 || S.inCostruzione; // sito in costruzione: tieni le pagine fuori da Google
   // link relativi: il sito funziona sia sul dominio sia in anteprima locale; la 404 usa link assoluti
   const rel = is404 ? "/" : "../".repeat(percorso.split("/").filter(Boolean).length);
   const home = rel || "./";
@@ -277,7 +278,7 @@ function pagina({ percorso, titolo, descrizione, attivo = "", corpo, immagine = 
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${esc(titolo)}</title>
 <meta name="description" content="${esc(descrizione)}">
-${is404 ? '<meta name="robots" content="noindex">' : `<link rel="canonical" href="${esc(url)}">`}
+${noindex ? '<meta name="robots" content="noindex, nofollow">' : `<link rel="canonical" href="${esc(url)}">`}
 <meta property="og:type" content="website">
 <meta property="og:locale" content="it_IT">
 <meta property="og:site_name" content="${esc(S.nome)}">
@@ -395,8 +396,13 @@ const indirizzi = pagine.filter((p) => p.percorso !== "/404.html").map((p) => BA
 fs.writeFileSync(path.join(OUT, "sitemap.xml"),
   '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
   indirizzi.map((u) => `  <url><loc>${esc(u)}</loc></url>`).join("\n") + "\n</urlset>\n");
-fs.writeFileSync(path.join(OUT, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${BASE}/sitemap.xml\n`);
-fs.writeFileSync(path.join(OUT, "CNAME"), new URL(BASE).hostname + "\n");
+fs.writeFileSync(path.join(OUT, "robots.txt"), S.inCostruzione
+  ? "User-agent: *\nDisallow: /\n"
+  : `User-agent: *\nAllow: /\nSitemap: ${BASE}/sitemap.xml\n`);
+// CNAME solo quando il dominio e' davvero attivo: un CNAME verso un dominio inesistente rende il sito irraggiungibile
+if (S.dominioAttivo) fs.writeFileSync(path.join(OUT, "CNAME"), new URL(BASE).hostname + "\n");
 fs.writeFileSync(path.join(OUT, ".nojekyll"), "");
 
 console.log(`Sito generato in docs/: ${pagine.length} pagine (${S.cani.length} cani, ${S.cucciolate.length} cucciolate).`);
+if (S.inCostruzione) console.log("Modalita' in costruzione: pagine con noindex e robots.txt che blocca tutto.");
+if (!S.dominioAttivo) console.log("Dominio non attivo: nessun CNAME scritto, il sito resta sull'indirizzo github.io.");
