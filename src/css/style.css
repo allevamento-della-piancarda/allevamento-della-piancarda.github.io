@@ -1,0 +1,485 @@
+/* Allevamento della Piancarda
+   Palette presa dal mantello del Dobermann: nero/marrone scuro per le fasce,
+   focato (fulvo) solo come piccoli segni, come le focature sul cane. */
+
+:root {
+  --mantello: #221c18;
+  --focato: #b3702f;
+  --carta: #eef0ea;
+  --superficie: #e3e6dd;
+  --inchiostro: #221c18;
+  --inchiostro-2: #5a554e;
+
+  --bg: var(--carta);
+  --bg-alt: var(--superficie);
+  --text: var(--inchiostro);
+  --muted: var(--inchiostro-2);
+  --accent: var(--focato);
+  --line: #cfd3c7;
+  --ph: #dde0d6;
+  --ph-text: #6f6a62;
+  --band: var(--mantello);
+  --band-text: #efe9e1;
+  --band-muted: #b9aea2;
+  --band-line: rgba(239, 233, 225, 0.14);
+  --btn-bg: #221c18;
+  --btn-fg: #efe9e1;
+
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", "URW Palladio L", Georgia, serif;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --wrap: 68rem;
+
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #171411;
+    --bg-alt: #1e1a16;
+    --text: #ece6de;
+    --muted: #b0a89e;
+    --accent: #d08f52;
+    --line: #37302a;
+    --ph: #26211c;
+    --ph-text: #9b9187;
+    --band: #0f0d0b;
+    --btn-bg: #ece6de;
+    --btn-fg: #171411;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #171411;
+  --bg-alt: #1e1a16;
+  --text: #ece6de;
+  --muted: #b0a89e;
+  --accent: #d08f52;
+  --line: #37302a;
+  --ph: #26211c;
+  --ph-text: #9b9187;
+  --band: #0f0d0b;
+  --btn-bg: #ece6de;
+  --btn-fg: #171411;
+}
+
+*, *::before, *::after { box-sizing: inherit; }
+
+html {
+  background: var(--band);
+  scroll-padding-top: env(safe-area-inset-top, 0px);
+  -webkit-text-size-adjust: 100%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 1.0625rem/1.6 var(--sans);
+}
+
+img { max-width: 100%; display: block; }
+
+a {
+  color: inherit;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+}
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+main:focus { outline: none; }
+
+h1, h2, h3 {
+  font-family: var(--serif);
+  font-weight: 400;
+  line-height: 1.12;
+  margin: 0 0 0.6em;
+}
+h2 { font-size: clamp(1.7rem, 4.5vw, 2.3rem); }
+h3 { font-size: 1.3rem; }
+p { margin: 0 0 1em; max-width: 36em; }
+
+.wrap {
+  max-width: var(--wrap);
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+.skip {
+  position: absolute;
+  left: -999px;
+  top: 0;
+}
+.skip:focus {
+  left: 1rem;
+  top: calc(env(safe-area-inset-top, 0px) + 1rem);
+  z-index: 20;
+  background: var(--bg);
+  color: var(--text);
+  padding: 0.6rem 1rem;
+}
+
+/* ---------- testata ---------- */
+
+.site-header {
+  background: var(--band);
+  color: var(--band-text);
+  border-bottom: 1px solid var(--band-line);
+}
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 4rem;
+}
+.brand {
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  text-decoration: none;
+}
+.nav { display: flex; gap: 1.75rem; }
+.nav a {
+  text-decoration: none;
+  padding: 0.4rem 0;
+  border-bottom: 2px solid transparent;
+}
+.nav a:hover { border-bottom-color: var(--band-line); }
+.nav a[aria-current="page"] { border-bottom-color: var(--accent); }
+.menu-toggle { display: none; }
+
+@media (max-width: 719px) {
+  .header-inner { flex-wrap: wrap; }
+  .nav {
+    width: 100%;
+    flex-direction: column;
+    gap: 0;
+    padding-bottom: 0.75rem;
+  }
+  .nav a {
+    padding: 0.8rem 0;
+    border-bottom: 1px solid var(--band-line);
+  }
+  .nav a[aria-current="page"] { border-bottom-color: var(--band-line); color: var(--accent); }
+  .js .menu-toggle {
+    display: inline-block;
+    background: none;
+    color: inherit;
+    font: inherit;
+    border: 1px solid var(--band-line);
+    border-radius: 999px;
+    padding: 0.35rem 0.9rem;
+    cursor: pointer;
+  }
+  .js .nav { display: none; }
+  .js .nav.open { display: flex; }
+}
+
+/* ---------- elementi comuni ---------- */
+
+.on-band {
+  background: var(--band);
+  color: var(--band-text);
+  --btn-bg: #efe9e1;
+  --btn-fg: #221c18;
+  --ph: #2c2520;
+  --ph-text: #a79c90;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.35rem;
+  border-radius: 999px;
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font-weight: 600;
+  text-decoration: none;
+  line-height: 1.2;
+}
+.btn:hover { text-decoration: underline; text-decoration-color: var(--accent); }
+.btn svg { width: 1.2em; height: 1.2em; flex: none; }
+
+.ph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background-color: var(--ph);
+  background-image: repeating-linear-gradient(135deg, transparent 0 11px, rgba(128, 120, 110, 0.08) 11px 12px);
+  color: var(--ph-text);
+  font-family: var(--serif);
+  font-style: italic;
+  text-align: center;
+}
+
+.hero-img, .dog-card-img, .dog-img, .owner-img, .litter-img, .g {
+  width: 100%;
+  object-fit: cover;
+  border-radius: 3px;
+}
+
+.section { padding: 3.5rem 0; }
+.section-alt { background: var(--bg-alt); }
+
+.facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.45rem 1.25rem;
+  margin: 1.25rem 0 1.75rem;
+}
+.facts > div { display: contents; }
+.facts dt { color: var(--muted); }
+.facts dd { margin: 0; }
+
+.more { margin-top: 1.5rem; }
+
+/* ---------- home ---------- */
+
+.hero { padding: 2.75rem 0 3.75rem; }
+.hero-inner { display: grid; gap: 2.25rem; align-items: end; }
+.hero-title {
+  font-size: clamp(2.8rem, 10.5vw, 5.8rem);
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.9rem;
+  max-width: 9ch;
+}
+.hero-breed {
+  font-family: var(--serif);
+  font-size: 1.35rem;
+  color: var(--band-muted);
+  margin-bottom: 1.5rem;
+}
+.hero-lead { color: var(--band-text); margin-bottom: 1.75rem; }
+.hero-img { aspect-ratio: 4 / 3; }
+@media (min-width: 820px) {
+  .hero-inner { grid-template-columns: 1.15fr 0.85fr; }
+  .hero-img { aspect-ratio: 4 / 5; }
+}
+
+.dog-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+  gap: 2rem 1.25rem;
+}
+@media (min-width: 720px) {
+  .dog-grid { grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 2.5rem 2rem; }
+}
+.dog-card { display: block; text-decoration: none; }
+.dog-card-img { aspect-ratio: 4 / 5; margin-bottom: 0.9rem; }
+.dog-card-name {
+  display: block;
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  line-height: 1.2;
+}
+.dog-card:hover .dog-card-name { text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 2px; }
+.dog-card-text { display: block; color: var(--muted); font-size: 0.95rem; margin-top: 0.25rem; }
+
+.owner { display: grid; gap: 2rem; align-items: center; }
+.owner-img { aspect-ratio: 1; max-width: 16rem; }
+@media (min-width: 720px) { .owner-img { aspect-ratio: 4 / 5; max-width: 22rem; } }
+.owner-name { color: var(--muted); font-family: var(--serif); font-style: italic; }
+@media (min-width: 720px) {
+  .owner { grid-template-columns: 1fr 1.6fr; gap: 3rem; }
+}
+
+.contacts { padding: 4rem 0; }
+.contacts p { color: var(--band-text); }
+.contacts-inner { display: grid; gap: 2.5rem; }
+.contact-list {
+  display: grid;
+  gap: 1.1rem;
+  margin: 0;
+  align-content: start;
+}
+.contact-list dt { color: var(--band-muted); font-size: 0.9rem; }
+.contact-list dd { margin: 0; font-family: var(--serif); font-size: 1.3rem; }
+@media (min-width: 720px) {
+  .contacts-inner { grid-template-columns: 1.3fr 1fr; }
+}
+
+/* ---------- cucciolate ---------- */
+
+.litter { display: grid; gap: 1.5rem; }
+.litter-img { aspect-ratio: 4 / 3; }
+.litter-title { font-size: clamp(1.6rem, 5vw, 2.2rem); }
+.cross { color: var(--accent); }
+@media (min-width: 720px) {
+  .litter { grid-template-columns: 1fr 1.15fr; gap: 2.5rem; align-items: start; }
+}
+.litters { display: grid; gap: 3rem; }
+.litters .litter + .litter { border-top: 1px solid var(--line); padding-top: 3rem; }
+
+/* ---------- pagine interne ---------- */
+
+.page { padding-top: 2.75rem; padding-bottom: 4.5rem; }
+.page-title { font-size: clamp(2.5rem, 8vw, 3.8rem); }
+.page-lead { color: var(--muted); margin-bottom: 2.75rem; }
+
+.dog { padding: 1.75rem 0 4.5rem; }
+.back { margin-bottom: 1.5rem; }
+.dog-head { display: grid; gap: 2rem; }
+.dog-img { aspect-ratio: 4 / 3; }
+@media (min-width: 820px) {
+  .dog-head { grid-template-columns: 5fr 6fr; gap: 3rem; align-items: start; }
+  .dog-img { aspect-ratio: 4 / 5; }
+}
+.dog-name { font-size: clamp(2.4rem, 8vw, 3.8rem); margin-bottom: 0.3rem; }
+.dog-sub { font-family: var(--serif); font-size: 1.25rem; color: var(--muted); }
+
+.dog-section {
+  margin-top: 3.5rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--line);
+}
+
+/* Genealogia: albero a parentesi come sul pedigree */
+.ped {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: 1.25rem;
+  row-gap: 0;
+}
+.ped-cell {
+  border-left: 2px solid var(--accent);
+  padding: 0.45rem 0 0.45rem 0.85rem;
+  min-width: 0;
+}
+.ped-cell small { display: block; color: var(--muted); font-size: 0.8rem; }
+.ped-cell strong {
+  display: block;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 1.1rem;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+.ped-s {
+  grid-column: 1;
+  grid-row: 1 / 5;
+  align-self: center;
+  border-left: 0;
+  padding-left: 0;
+}
+.ped-s strong { font-size: 1.5rem; }
+.ped-p { grid-column: 2; grid-row: 1 / 3; align-self: center; }
+.ped-m { grid-column: 2; grid-row: 3 / 5; align-self: center; }
+.ped-g1 { grid-column: 3; grid-row: 1; }
+.ped-g2 { grid-column: 3; grid-row: 2; }
+.ped-g3 { grid-column: 3; grid-row: 3; margin-top: 1rem; }
+.ped-g4 { grid-column: 3; grid-row: 4; }
+@media (max-width: 559px) {
+  .ped { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 0.9rem; }
+  .ped-s { display: none; }
+  .ped-p, .ped-m { grid-column: 1; }
+  .ped-g1, .ped-g2, .ped-g3, .ped-g4 { grid-column: 2; }
+}
+
+.res-group + .res-group { margin-top: 2.25rem; }
+.res-group h3 { color: var(--muted); font-size: 1.15rem; }
+.results { list-style: none; margin: 0; padding: 0; }
+.results li {
+  display: grid;
+  grid-template-columns: 9rem 1fr;
+  gap: 0.2rem 1.5rem;
+  padding: 0.95rem 0;
+  border-top: 1px solid var(--line);
+}
+.results time { color: var(--muted); font-variant-numeric: tabular-nums; }
+.results p { margin: 0; }
+.results .esito { font-family: var(--serif); font-size: 1.2rem; }
+.results .evento { color: var(--muted); font-size: 0.95rem; }
+@media (max-width: 559px) {
+  .results li { grid-template-columns: 1fr; }
+}
+
+.gallery {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(46%, 16rem), 1fr));
+  gap: 0.6rem;
+}
+.g { aspect-ratio: 1; font-size: 0.9rem; }
+.g-btn {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+}
+
+.others ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem 1.75rem; }
+.others a { font-family: var(--serif); font-size: 1.3rem; }
+
+/* ---------- piè di pagina ---------- */
+
+.site-footer {
+  background: var(--band);
+  color: var(--band-muted);
+  border-top: 1px solid var(--band-line);
+  padding: 2rem 0 5.5rem;
+}
+.footer-inner p { margin: 0 0 0.3rem; }
+.footer-brand { font-family: var(--serif); color: var(--band-text); font-size: 1.1rem; }
+.footer-inner .footer-small { font-size: 0.85rem; margin-top: 0.8rem; }
+
+/* ---------- WhatsApp sempre visibile ---------- */
+
+.wa-float {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  padding: 0 1rem calc(1rem + env(safe-area-inset-bottom, 0px)) 0;
+  pointer-events: none;
+  z-index: 10;
+}
+.wa-float a {
+  pointer-events: auto;
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  box-shadow: 0 0 0 3px var(--accent);
+}
+.wa-float svg { width: 1.6rem; height: 1.6rem; }
+
+/* ---------- foto ingrandita ---------- */
+
+.lightbox {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  max-width: 94vw;
+  max-height: 90vh;
+}
+.lightbox::backdrop { background: rgba(15, 12, 10, 0.9); }
+.lightbox img { max-width: 94vw; max-height: 84vh; object-fit: contain; border-radius: 3px; }
+.lb-close {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 1rem);
+  right: 1rem;
+  background: #efe9e1;
+  color: #221c18;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
