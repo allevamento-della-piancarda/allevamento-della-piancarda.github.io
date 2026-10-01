@@ -25,6 +25,8 @@
   --btn-bg: #221c18;
   --btn-fg: #efe9e1;
 
+  --h-testata: 4rem;
+
   --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", "URW Palladio L", Georgia, serif;
   --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --wrap: 68rem;
@@ -67,7 +69,8 @@
 
 html {
   background: var(--band);
-  scroll-padding-top: env(safe-area-inset-top, 0px);
+  /* con la testata fissa, un ancoraggio senza questo finisce coperto */
+  scroll-padding-top: calc(env(safe-area-inset-top, 0px) + var(--h-testata));
   -webkit-text-size-adjust: 100%;
 }
 @media (prefers-reduced-motion: no-preference) {
@@ -126,9 +129,30 @@ p { margin: 0 0 1em; max-width: 36em; }
 /* ---------- testata ---------- */
 
 .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 15; /* sopra i contenuti, sotto il collegamento "vai al contenuto" (20) */
   background: var(--band);
   color: var(--band-text);
   border-bottom: 1px solid var(--band-line);
+  /* se il menu mobile viene aperto a pagina scorsa, la testata non deve
+     coprire tutto lo schermo */
+  max-height: 100dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+/* ombra solo quando e' effettivamente staccata dall'inizio della pagina:
+   sopra la foto a tutta larghezza serve a separarla dall'immagine */
+.site-header[data-stuck] { box-shadow: 0 2px 16px rgba(0, 0, 0, 0.35); }
+@media (prefers-reduced-motion: no-preference) {
+  .site-header { transition: box-shadow 0.25s ease; }
+}
+.testata-sentinella {
+  position: absolute;
+  top: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
 }
 .header-inner {
   display: flex;
@@ -177,6 +201,10 @@ p { margin: 0 0 1em; max-width: 36em; }
   }
   .js .nav { display: none; }
   .js .nav.open { display: flex; }
+  /* senza JavaScript il menu e' sempre espanso: una testata alta e fissa
+     mangerebbe mezzo schermo, quindi qui torna a scorrere con la pagina */
+  html:not(.js) .site-header { position: static; }
+  html:not(.js) { scroll-padding-top: env(safe-area-inset-top, 0px); }
 }
 
 /* ---------- elementi comuni ---------- */

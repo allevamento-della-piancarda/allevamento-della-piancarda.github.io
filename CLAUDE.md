@@ -65,6 +65,18 @@ Accessibility details worth preserving when editing: `aria-roledescription="caro
 
 `anteprima-palette/` (gitignored) holds throwaway copies of `docs/` with different colour palettes appended as CSS variable overrides, plus an index page comparing them. Regenerate after a build with `python3 anteprima-palette/genera.py`. Palettes are defined at the top of that script; it also reports the accent/background contrast ratio for each.
 
+### Sticky header
+
+`.site-header` is `position: sticky; top: 0; z-index: 15` — pure CSS, no JS needed for the stickiness itself. Three couplings to keep in mind when editing:
+
+- `--h-testata` (4rem, matching the header's `min-height`) feeds `html { scroll-padding-top }`. Without it, in-page anchors (`#contatti`, `#cani`) land *behind* the header. Change the header height and this variable must follow.
+- On narrow screens **without JS** the menu is permanently expanded, so a tall sticky header would swallow the viewport: `html:not(.js) .site-header` reverts to `position: static` and the scroll-padding drops back to just the safe-area inset.
+- `z-index: 15` sits above content but below `.skip:focus` (20); `.wa-float` is also 10 but never overlaps spatially.
+
+An IntersectionObserver on an injected `.testata-sentinella` (1px, absolutely positioned at document top) toggles `data-stuck` on the header, which is what triggers the shadow — needed to separate the header from the full-bleed hero photo. Stickiness degrades gracefully: without JS there's simply no shadow. The same IIFE closes the mobile menu after a link is tapped, which matters only because the header is now sticky.
+
+Note `overflow` must stay off `html`/`body` — an `overflow` value other than `visible` on any ancestor silently breaks `position: sticky`.
+
 ### Publication switches
 
 Two booleans at the top of `contenuti.js` gate the staged rollout — flip them, rerun `node build.js`, commit:

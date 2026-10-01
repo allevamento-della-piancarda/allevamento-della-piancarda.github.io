@@ -148,3 +148,38 @@
     avvia();
   });
 })();
+
+/* Testata fissa: segnala quando si e' staccata dall'inizio della pagina,
+   cosi' il CSS puo' aggiungere l'ombra solo allora. Lo "sticky" in se' e'
+   tutto CSS: senza questo file la testata segue comunque la pagina. */
+(function () {
+  "use strict";
+
+  var testata = document.querySelector(".site-header");
+  if (!testata) return;
+
+  // chiude il menu mobile dopo aver scelto una voce: con la testata fissa
+  // resterebbe aperta sopra il contenuto appena raggiunto
+  var nav = document.getElementById("nav");
+  var toggle = document.getElementById("menu-toggle");
+  if (nav && toggle) {
+    nav.addEventListener("click", function (e) {
+      if (!e.target.closest("a") || !nav.classList.contains("open")) return;
+      nav.classList.remove("open");
+      toggle.setAttribute("aria-expanded", "false");
+    });
+  }
+
+  if (!("IntersectionObserver" in window)) return;
+  var sentinella = document.createElement("div");
+  sentinella.className = "testata-sentinella";
+  sentinella.setAttribute("aria-hidden", "true");
+  testata.parentNode.insertBefore(sentinella, testata);
+
+  new IntersectionObserver(function (voci) {
+    voci.forEach(function (v) {
+      if (v.isIntersecting) testata.removeAttribute("data-stuck");
+      else testata.setAttribute("data-stuck", "");
+    });
+  }).observe(sentinella);
+})();
