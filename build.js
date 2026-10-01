@@ -21,6 +21,11 @@ const MESI = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "lug
 
 const ICONA_CHAT = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 3C6.9 3 3 6.6 3 11c0 2.4 1.1 4.5 3 6l-.9 4 4.4-2.2c.8.2 1.6.3 2.5.3 5.1 0 9-3.6 9-8.1S17.1 3 12 3z"/></svg>';
 
+const ICONA_PREV = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M15 5l-7 7 7 7"/></svg>';
+const ICONA_NEXT = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>';
+const ICONA_PAUSA = '<svg class="i-pausa" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 5h3.1v14H8zM12.9 5H16v14h-3.1z"/></svg>';
+const ICONA_PLAY = '<svg class="i-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 5l11 7-11 7z"/></svg>';
+
 const FAVICON = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23221c18'/%3E%3Ccircle cx='11' cy='13' r='3' fill='%23b3702f'/%3E%3Ccircle cx='21' cy='13' r='3' fill='%23b3702f'/%3E%3C/svg%3E";
 
 /* ---------- controlli sui contenuti ---------- */
@@ -91,6 +96,43 @@ function nomeConLink(genitore, rel) {
 
 /* ---------- blocchi ---------- */
 
+function carosello(rel) {
+  const voci = (S.caroselloHome || [])
+    .map((v) => (typeof v === "string" ? { foto: v } : v || {}));
+
+  // con meno di due voci non c'e' nulla da far scorrere: resta la foto singola
+  if (voci.length < 2) {
+    const sola = voci[0] || { foto: S.fotoHome };
+    return `<div class="hero-photo">${foto(sola.foto || "", sola.didascalia || "Foto principale", "hero-img", rel, false)}</div>`;
+  }
+
+  const n = voci.length;
+  const slide = voci.map((v, i) => {
+    const alt = v.didascalia || `Foto ${i + 1} dell'allevamento`;
+    return `<li class="car-slide${i === 0 ? " is-on" : ""}" role="group" aria-roledescription="slide" aria-label="${i + 1} di ${n}">` +
+      foto(v.foto, alt, "hero-img", rel, i > 0) +
+      (v.didascalia ? `<p class="car-cap">${esc(v.didascalia)}</p>` : "") +
+    "</li>";
+  }).join("");
+
+  const punti = voci.map((v, i) =>
+    '<li>' +
+      `<button type="button" class="car-dot" data-car-va="${i}" aria-label="Vai alla foto ${i + 1} di ${n}"${i === 0 ? ' aria-current="true"' : ""}></button>` +
+    "</li>").join("");
+
+  return '<div class="hero-photo">' +
+    '<section class="car" data-car aria-roledescription="carosello" aria-label="Foto dell\'allevamento">' +
+      `<ul class="car-track" data-car-track>${slide}</ul>` +
+      '<div class="car-bar">' +
+        `<button type="button" class="car-arrow" data-car-prev aria-label="Foto precedente">${ICONA_PREV}</button>` +
+        `<ul class="car-dots">${punti}</ul>` +
+        `<button type="button" class="car-arrow" data-car-next aria-label="Foto successiva">${ICONA_NEXT}</button>` +
+        `<button type="button" class="car-play" data-car-play aria-pressed="false" aria-label="Metti in pausa lo scorrimento automatico">${ICONA_PAUSA}${ICONA_PLAY}</button>` +
+      "</div>" +
+    "</section>" +
+  "</div>";
+}
+
 function grigliaCani(rel) {
   return `<ul class="dog-grid">${S.cani.map((c) =>
     `<li><a class="dog-card" href="${urlCane(c, rel)}">` +
@@ -153,7 +195,7 @@ function corpoHome(rel) {
         `<p class="hero-lead">${esc(S.presentazione)}</p>` +
         bottoneWa(`Ciao, vorrei informazioni sui vostri ${S.razza}.`, "Scrivici su WhatsApp") +
       "</div>" +
-      `<div class="hero-photo">${foto(S.fotoHome, "Foto principale", "hero-img", rel, false)}</div>` +
+      carosello(rel) +
     "</div></section>" +
 
     '<section class="section" id="cani" aria-labelledby="t-cani"><div class="wrap">' +

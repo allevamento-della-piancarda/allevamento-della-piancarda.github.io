@@ -483,3 +483,114 @@ p { margin: 0 0 1em; max-width: 36em; }
   font-weight: 600;
   cursor: pointer;
 }
+
+/* ---------- carosello della home ----------
+   Senza JavaScript diventa una striscia scorrevole: tutte le foto restano
+   raggiungibili col dito e con la tastiera. Con JavaScript le slide si
+   sovrappongono e compaiono i comandi. */
+
+.car { position: relative; }
+.car-track { list-style: none; margin: 0; padding: 0; }
+
+html:not(.js) .car-track {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+html:not(.js) .car-slide { flex: 0 0 100%; scroll-snap-align: center; position: relative; }
+html:not(.js) .car-bar { display: none; }
+
+html.js .car-track { position: relative; aspect-ratio: 4 / 3; }
+html.js .car-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease;
+}
+html.js .car-slide.is-on { opacity: 1; visibility: visible; }
+html.js .car-slide .hero-img,
+html.js .car-slide .ph { height: 100%; aspect-ratio: auto; }
+@media (min-width: 820px) {
+  html.js .car-track { aspect-ratio: 4 / 5; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.js .car-slide { transition: none; }
+}
+
+.car-cap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+  padding: 2.5rem 0.9rem 0.7rem;
+  font-size: 0.9rem;
+  color: #fff;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.62), transparent);
+  border-radius: 0 0 3px 3px;
+}
+
+.car-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  margin-top: 0.7rem;
+}
+
+.car-arrow, .car-play {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: 1px solid var(--band-line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--band-text);
+  cursor: pointer;
+}
+.car-arrow svg, .car-play svg { width: 1.15rem; height: 1.15rem; }
+.car-arrow:hover, .car-play:hover { background: rgba(255, 255, 255, 0.1); }
+.car-play { margin-left: 0.35rem; }
+
+/* un'icona per volta, in base allo stato del pulsante */
+.car-play .i-play { display: none; }
+.car-play[aria-pressed="true"] .i-pausa { display: none; }
+.car-play[aria-pressed="true"] .i-play { display: block; }
+
+.car-dots {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  list-style: none;
+  margin: 0;
+  padding: 0 0.3rem;
+}
+.car-dot {
+  display: block;
+  width: 0.95rem;
+  height: 0.95rem;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+}
+.car-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0.22rem;
+  border-radius: 999px;
+  background: var(--band-muted);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.car-dot:hover::after { background: var(--band-text); }
+.car-dot[aria-current="true"]::after { background: var(--accent); transform: scale(1.35); }
+@media (prefers-reduced-motion: reduce) {
+  .car-dot::after { transition: none; }
+}

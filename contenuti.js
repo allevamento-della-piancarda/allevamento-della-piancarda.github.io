@@ -18,7 +18,16 @@ module.exports = {
   inCostruzione: true,
   nome: "Allevamento della Piancarda",
   razza: "Dobermann",
-  fotoHome: "",
+  fotoHome: "", // usata come foto singola se il carosello qui sotto e' vuoto
+
+  /* Carosello della home. Ogni voce: { foto: "img/...", didascalia: "" }.
+     La didascalia e' facoltativa e compare sovrimpressa in basso.
+     Con meno di due voci il sito torna automaticamente alla foto singola. */
+  caroselloHome: [
+    { foto: "", didascalia: "" },
+    { foto: "", didascalia: "" },
+    { foto: "", didascalia: "" }
+  ],
   presentazione: "Qui va la presentazione dell'allevamento: due o tre frasi su chi siete e che Dobermann cercate di far nascere.",
 
   proprietario: {

@@ -43,6 +43,22 @@ A cache-busting `VERSIONE` (based on build time) is appended as `?v=` on the CSS
 - `cucciolate`: array of litters, newest first — the first entry is the one shown on the home page. `padre`/`madre` can reference an existing dog via `id` (renders as a link) or just a plain name.
 - Dates are `"AAAA-MM-GG"` (ISO `YYYY-MM-DD`); blank photo fields (`""`) render as a placeholder box instead of broken `<img>`.
 
+### Home carousel
+
+`caroselloHome` in `contenuti.js` drives the hero slideshow — an array of `{ foto, didascalia }` (plain strings also accepted). Built by `carosello()` in `build.js`; **falls back to the single `fotoHome` image whenever fewer than two entries exist**, so emptying the array restores the original hero with no code change.
+
+Progressive enhancement hinges on the `js` class that the inline `<head>` script puts on `<html>`:
+- without it, CSS renders the slides as a horizontal `scroll-snap` strip and hides the controls — every photo stays reachable with no JS
+- with it, slides stack absolutely and cross-fade, and the arrows/dots/pause button appear
+
+The carousel JS lives in its own IIFE at the end of `src/js/main.js`, **not** inside the lightbox block — that one returns early when `<dialog>` is unsupported, which would skip anything appended after it.
+
+Accessibility details worth preserving when editing: `aria-roledescription="carosello"`/`"slide"` with "n di N" labels, a pause button (required whenever rotation is automatic) whose `aria-pressed` state also drives the icon swap in CSS, `aria-live` on the track switched to `off` while rotating so screen readers aren't interrupted every 6s, auto-rotation suppressed under `prefers-reduced-motion`, and rotation stopped permanently on any manual interaction.
+
+### Local palette previews
+
+`anteprima-palette/` (gitignored) holds throwaway copies of `docs/` with different colour palettes appended as CSS variable overrides, plus an index page comparing them. Regenerate after a build with `python3 anteprima-palette/genera.py`. Palettes are defined at the top of that script; it also reports the accent/background contrast ratio for each.
+
 ### Publication switches
 
 Two booleans at the top of `contenuti.js` gate the staged rollout — flip them, rerun `node build.js`, commit:
