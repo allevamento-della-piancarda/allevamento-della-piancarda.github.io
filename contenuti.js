@@ -20,13 +20,18 @@ module.exports = {
   razza: "Dobermann",
   fotoHome: "", // usata come foto singola se il carosello qui sotto e' vuoto
 
-  /* Carosello della home. Ogni voce: { foto: "img/...", didascalia: "" }.
-     La didascalia e' facoltativa e compare sovrimpressa in basso.
-     Con meno di due voci il sito torna automaticamente alla foto singola. */
+  /* Carosello a tutta larghezza in cima alla home.
+     Ogni voce: { foto, fotoM, fotoS, didascalia }
+       foto        immagine grande, lato lungo 1920 px
+       fotoM, fotoS  versioni da 1280 e 800 px, facoltative: se presenti il
+                     browser scarica la piu' piccola che gli basta (importante,
+                     perche' questa immagine occupa tutto lo schermo)
+       didascalia  facoltativa, compare sovrimpressa in basso
+     Con meno di due voci resta una foto sola, senza scorrimento. */
   caroselloHome: [
-    { foto: "", didascalia: "" },
-    { foto: "", didascalia: "" },
-    { foto: "", didascalia: "" }
+    { foto: "", fotoM: "", fotoS: "", didascalia: "" },
+    { foto: "", fotoM: "", fotoS: "", didascalia: "" },
+    { foto: "", fotoM: "", fotoS: "", didascalia: "" }
   ],
   presentazione: "Qui va la presentazione dell'allevamento: due o tre frasi su chi siete e che Dobermann cercate di far nascere.",
 

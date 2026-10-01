@@ -484,80 +484,120 @@ p { margin: 0 0 1em; max-width: 36em; }
   cursor: pointer;
 }
 
-/* ---------- carosello della home ----------
-   Senza JavaScript diventa una striscia scorrevole: tutte le foto restano
-   raggiungibili col dito e con la tastiera. Con JavaScript le slide si
-   sovrappongono e compaiono i comandi. */
+/* ---------- carosello a tutta larghezza in cima alla home ----------
+   Modello: foto a pieno schermo sotto l'intestazione, dissolvenza lenta,
+   nessun testo sovrimpresso. I comandi restano presenti ma discreti:
+   senza di essi chi non usa il mouse non potrebbe ne' fermare ne'
+   scorrere le foto. Senza JavaScript diventa una striscia scorrevole. */
 
-.car { position: relative; }
+.car-hero {
+  position: relative;
+  background: var(--band);
+  overflow: hidden;
+}
 .car-track { list-style: none; margin: 0; padding: 0; }
 
-html:not(.js) .car-track {
+/* altezza: generosa ma non oltre lo schermo, e mai cosi' bassa da sparire */
+.car-hero .car-track,
+html:not(.js) .car-hero .car-slide {
+  height: clamp(20rem, 78vh, 46rem);
+}
+
+.car-hero .hero-img,
+.car-hero .ph {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  border-radius: 0;
+  object-fit: cover;
+  object-position: center;
+}
+
+html:not(.js) .car-hero .car-track {
   display: flex;
-  gap: 0.5rem;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
 }
-html:not(.js) .car-slide { flex: 0 0 100%; scroll-snap-align: center; position: relative; }
+html:not(.js) .car-hero .car-slide { flex: 0 0 100%; scroll-snap-align: center; position: relative; }
 html:not(.js) .car-bar { display: none; }
 
-html.js .car-track { position: relative; aspect-ratio: 4 / 3; }
-html.js .car-slide {
+html.js .car-hero .car-track { position: relative; }
+html.js .car-hero .car-slide {
   position: absolute;
   inset: 0;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.5s ease;
+  transition: opacity 1.1s ease;
 }
-html.js .car-slide.is-on { opacity: 1; visibility: visible; }
-html.js .car-slide .hero-img,
-html.js .car-slide .ph { height: 100%; aspect-ratio: auto; }
-@media (min-width: 820px) {
-  html.js .car-track { aspect-ratio: 4 / 5; }
-}
+html.js .car-hero .car-slide.is-on { opacity: 1; visibility: visible; }
 @media (prefers-reduced-motion: reduce) {
-  html.js .car-slide { transition: none; }
+  html.js .car-hero .car-slide { transition: none; }
 }
 
-.car-cap {
+/* velatura in basso: i comandi e la didascalia restano leggibili
+   qualunque sia la foto sotto */
+.car-hero .car::after {
+  content: "";
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
+  height: 9rem;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.55), transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+.car-hero-sola::after { display: none; }
+
+.car-cap {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 3.6rem;
+  width: min(var(--wrap), 100% - 3rem);
   margin: 0;
-  padding: 2.5rem 0.9rem 0.7rem;
-  font-size: 0.9rem;
+  text-align: center;
+  font-size: 1rem;
   color: #fff;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.62), transparent);
-  border-radius: 0 0 3px 3px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  z-index: 2;
 }
 
 .car-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0.9rem;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.35rem;
-  margin-top: 0.7rem;
+  gap: 0.3rem;
 }
 
+/* sopra una foto non si puo' contare sui colori del tema:
+   servono tinte che funzionino su qualunque immagine */
 .car-arrow, .car-play {
   display: grid;
   place-items: center;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2.4rem;
+  height: 2.4rem;
   padding: 0;
-  border: 1px solid var(--band-line);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: 999px;
-  background: transparent;
-  color: var(--band-text);
+  background: rgba(0, 0, 0, 0.42);
+  color: #fff;
   cursor: pointer;
+  backdrop-filter: blur(3px);
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
-.car-arrow svg, .car-play svg { width: 1.15rem; height: 1.15rem; }
-.car-arrow:hover, .car-play:hover { background: rgba(255, 255, 255, 0.1); }
-.car-play { margin-left: 0.35rem; }
-
-/* un'icona per volta, in base allo stato del pulsante */
+.car-arrow svg, .car-play svg { width: 1.1rem; height: 1.1rem; }
+.car-arrow:hover, .car-play:hover {
+  background: rgba(0, 0, 0, 0.68);
+  border-color: #fff;
+}
+.car-play { margin-left: 0.5rem; }
 .car-play .i-play { display: none; }
 .car-play[aria-pressed="true"] .i-pausa { display: none; }
 .car-play[aria-pressed="true"] .i-play { display: block; }
@@ -565,18 +605,17 @@ html.js .car-slide .ph { height: 100%; aspect-ratio: auto; }
 .car-dots {
   display: flex;
   align-items: center;
-  gap: 0.3rem;
+  gap: 0.25rem;
   list-style: none;
   margin: 0;
-  padding: 0 0.3rem;
+  padding: 0 0.4rem;
 }
 .car-dot {
   display: block;
-  width: 0.95rem;
-  height: 0.95rem;
+  width: 1.15rem;
+  height: 1.5rem;
   padding: 0;
   border: 0;
-  border-radius: 999px;
   background: transparent;
   cursor: pointer;
   position: relative;
@@ -584,13 +623,35 @@ html.js .car-slide .ph { height: 100%; aspect-ratio: auto; }
 .car-dot::after {
   content: "";
   position: absolute;
-  inset: 0.22rem;
+  left: 0.2rem;
+  right: 0.2rem;
+  top: 50%;
+  height: 0.4rem;
+  margin-top: -0.2rem;
   border-radius: 999px;
-  background: var(--band-muted);
-  transition: background 0.2s ease, transform 0.2s ease;
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  transition: background 0.2s ease, left 0.2s ease, right 0.2s ease;
 }
-.car-dot:hover::after { background: var(--band-text); }
-.car-dot[aria-current="true"]::after { background: var(--accent); transform: scale(1.35); }
+.car-dot:hover::after { background: #fff; }
+.car-dot[aria-current="true"]::after {
+  background: #fff;
+  left: 0;
+  right: 0;
+}
 @media (prefers-reduced-motion: reduce) {
-  .car-dot::after { transition: none; }
+  .car-dot::after, .car-arrow, .car-play { transition: none; }
+}
+
+@media (max-width: 480px) {
+  .car-arrow { display: none; }
+  .car-cap { bottom: 3.1rem; font-size: 0.9rem; }
+}
+
+/* fascia del nome, ora sotto le foto e a piena larghezza */
+.hero-sotto .hero-inner { grid-template-columns: 1fr; }
+.hero-sotto .hero-text { max-width: 46rem; }
+.hero-sotto .hero-title { max-width: 20ch; }
+@media (min-width: 820px) {
+  .hero-sotto .hero-inner { grid-template-columns: 1fr; }
 }

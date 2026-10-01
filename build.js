@@ -96,21 +96,41 @@ function nomeConLink(genitore, rel) {
 
 /* ---------- blocchi ---------- */
 
+function immagineSlide(v, alt, rel, primaInOrdine) {
+  if (!v.foto) {
+    return `<div class="hero-img ph" role="img" aria-label="${esc(alt)}, foto in arrivo"><span>${esc(alt)}</span></div>`;
+  }
+  const misure = [];
+  if (v.fotoS) misure.push(`${esc(rel + v.fotoS)} 800w`);
+  if (v.fotoM) misure.push(`${esc(rel + v.fotoM)} 1280w`);
+  misure.push(`${esc(rel + v.foto)} 1920w`);
+  const srcset = misure.length > 1 ? ` srcset="${misure.join(", ")}" sizes="100vw"` : "";
+  // la prima immagine decide quando la pagina "sembra" pronta: va scaricata subito
+  const priorita = primaInOrdine
+    ? ' fetchpriority="high" decoding="async"'
+    : ' loading="lazy" fetchpriority="low" decoding="async"';
+  return `<img class="hero-img" src="${esc(rel + v.foto)}"${srcset} alt="${esc(alt)}"${priorita}>`;
+}
+
 function carosello(rel) {
   const voci = (S.caroselloHome || [])
     .map((v) => (typeof v === "string" ? { foto: v } : v || {}));
 
-  // con meno di due voci non c'e' nulla da far scorrere: resta la foto singola
+  // con meno di due voci non c'e' nulla da far scorrere: resta la foto sola
   if (voci.length < 2) {
     const sola = voci[0] || { foto: S.fotoHome };
-    return `<div class="hero-photo">${foto(sola.foto || "", sola.didascalia || "Foto principale", "hero-img", rel, false)}</div>`;
+    const alt = sola.didascalia || `${S.razza} dell'${S.nome}`;
+    return '<div class="car-hero car-hero-sola">' +
+      `<div class="car-track"><div class="car-slide is-on">${immagineSlide(sola, alt, rel, true)}` +
+      (sola.didascalia ? `<p class="car-cap">${esc(sola.didascalia)}</p>` : "") +
+      "</div></div></div>";
   }
 
   const n = voci.length;
   const slide = voci.map((v, i) => {
-    const alt = v.didascalia || `Foto ${i + 1} dell'allevamento`;
+    const alt = v.didascalia || `${S.razza} dell'${S.nome}, foto ${i + 1}`;
     return `<li class="car-slide${i === 0 ? " is-on" : ""}" role="group" aria-roledescription="slide" aria-label="${i + 1} di ${n}">` +
-      foto(v.foto, alt, "hero-img", rel, i > 0) +
+      immagineSlide(v, alt, rel, i === 0) +
       (v.didascalia ? `<p class="car-cap">${esc(v.didascalia)}</p>` : "") +
     "</li>";
   }).join("");
@@ -120,7 +140,7 @@ function carosello(rel) {
       `<button type="button" class="car-dot" data-car-va="${i}" aria-label="Vai alla foto ${i + 1} di ${n}"${i === 0 ? ' aria-current="true"' : ""}></button>` +
     "</li>").join("");
 
-  return '<div class="hero-photo">' +
+  return '<div class="car-hero">' +
     '<section class="car" data-car aria-roledescription="carosello" aria-label="Foto dell\'allevamento">' +
       `<ul class="car-track" data-car-track>${slide}</ul>` +
       '<div class="car-bar">' +
@@ -188,14 +208,15 @@ function sezioneContatti() {
 function corpoHome(rel) {
   const ultima = S.cucciolate[0];
   const p = S.proprietario;
-  return '<section class="hero on-band"><div class="wrap hero-inner">' +
+  return carosello(rel) +
+
+    '<section class="hero on-band hero-sotto"><div class="wrap hero-inner">' +
       '<div class="hero-text">' +
         `<h1 class="hero-title">${esc(S.nome)}</h1>` +
         `<p class="hero-breed">${esc(S.razza)}</p>` +
         `<p class="hero-lead">${esc(S.presentazione)}</p>` +
         bottoneWa(`Ciao, vorrei informazioni sui vostri ${S.razza}.`, "Scrivici su WhatsApp") +
       "</div>" +
-      carosello(rel) +
     "</div></section>" +
 
     '<section class="section" id="cani" aria-labelledby="t-cani"><div class="wrap">' +

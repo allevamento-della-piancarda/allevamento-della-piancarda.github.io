@@ -45,11 +45,17 @@ A cache-busting `VERSIONE` (based on build time) is appended as `?v=` on the CSS
 
 ### Home carousel
 
-`caroselloHome` in `contenuti.js` drives the hero slideshow — an array of `{ foto, didascalia }` (plain strings also accepted). Built by `carosello()` in `build.js`; **falls back to the single `fotoHome` image whenever fewer than two entries exist**, so emptying the array restores the original hero with no code change.
+`caroselloHome` in `contenuti.js` drives the hero — a **full-bleed slideshow directly under the header**, modelled on allevamentodelcolledellaguardia.it: tall photo (`clamp(20rem, 78vh, 46rem)`), slow cross-fade, no text over the image. The kennel name, lead and WhatsApp button sit in the `.hero-sotto` band *below* it.
+
+Entries are `{ foto, fotoM, fotoS, didascalia }` (plain strings also accepted). `fotoM`/`fotoS` (1280px/800px) are optional; when present `immagineSlide()` emits a `srcset` with `sizes="100vw"` — worth supplying, since this image spans the viewport. The first slide gets `fetchpriority="high"` and no lazy loading because it determines perceived load time; the rest are lazy and low priority.
+
+Built by `carosello()` in `build.js`; **falls back to a single static photo whenever fewer than two entries exist** (using `fotoHome` if the array is empty), so emptying the array removes the slideshow with no code change.
 
 Progressive enhancement hinges on the `js` class that the inline `<head>` script puts on `<html>`:
 - without it, CSS renders the slides as a horizontal `scroll-snap` strip and hides the controls — every photo stays reachable with no JS
 - with it, slides stack absolutely and cross-fade, and the arrows/dots/pause button appear
+
+Controls are kept deliberately, unlike the reference site, which disables its arrows and dots in CSS — without them nobody can pause or navigate by keyboard. They are overlaid on the photo with fixed white-on-translucent-black colours rather than theme variables, since no theme colour is legible over an arbitrary photograph, plus a bottom gradient scrim.
 
 The carousel JS lives in its own IIFE at the end of `src/js/main.js`, **not** inside the lightbox block — that one returns early when `<dialog>` is unsupported, which would skip anything appended after it.
 

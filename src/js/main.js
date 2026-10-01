@@ -37,7 +37,7 @@
 (function () {
   "use strict";
 
-  var INTERVALLO = 6000;
+  var INTERVALLO = 9000;
   var caroselli = document.querySelectorAll("[data-car]");
 
   Array.prototype.forEach.call(caroselli, function (car) {
